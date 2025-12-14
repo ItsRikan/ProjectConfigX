@@ -39,7 +39,7 @@ path: IDENT ("." IDENT)*
 // Tokens
 // ----------------------
 
-BOOL: "true" | "false"
+BOOL: /true|false/i
 
 IDENT: /[a-zA-Z_][a-zA-Z0-9_]*/
 

@@ -32,9 +32,9 @@ DeleteNode(path=[...])
 
 from typing import Any
 
-from configx.qlang.parser import GetNode, SetNode, DeleteNode
 from configx.core.tree import ConfigTree
 from configx.core.errors import ConfigPathNotFoundError
+from configx.qlang.parser import ConfigXQLParser, GetNode, SetNode, DeleteNode
 
 
 class ConfigXQLInterpreter:
@@ -44,12 +44,17 @@ class ConfigXQLInterpreter:
 
     def __init__(self, tree: ConfigTree):
         self.tree = tree
+        self._parser = ConfigXQLParser()
 
-    def execute(self, node) -> Any:
+    def execute(self, query: str) -> Any:
         """
-        Execute a single AST node.
-        Returns the result of execution (if any).
+        Parse and execute a single ConfigXQL query.
+
+        Returns:
+            - value for GET
+            - None for SET / DELETE
         """
+        node = self._parser.parse(query)
 
         if isinstance(node, GetNode):
             return self._exec_get(node)
@@ -61,7 +66,6 @@ class ConfigXQLInterpreter:
             return self._exec_delete(node)
 
         raise TypeError(f"Unsupported AST node: {type(node)}")
-
     # ------------------------------------------------------------------
     # Execution helpers
     # ------------------------------------------------------------------

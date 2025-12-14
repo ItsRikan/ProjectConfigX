@@ -118,6 +118,3 @@ class ConfigXQLParser:
         Raises Lark exceptions on syntax errors.
         """
         return self._parser.parse(query)
-
-q = ConfigXQLParser()
-print(q.parse('appsettings.language="python"'))

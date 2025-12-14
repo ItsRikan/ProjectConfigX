@@ -11,6 +11,7 @@ env/
 .vscode/
 
 # configx files
+.configx/
 history.log
 configx/pyproject.toml
 readmefiles/arch.md

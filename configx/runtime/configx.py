@@ -1,0 +1,163 @@
+# configx/runtime/configx.py
+"""
+ConfigX Public Runtime API
+-------------------------
+
+This module exposes the *single public entry point* for using ConfigX as a
+Python library. All other layers (core, storage, qlang) remain internal.
+
+Design goals:
+- One stable API surface: ConfigX
+- Language-agnostic core (CLI / server / other bindings wrap this)
+- Hide parser / interpreter / tree internals
+- Expose only *actually implemented* lifecycle features
+
+
+No disk
+
+No files
+
+Perfect for tests, scripts, AI agents
+"""
+
+from typing import Any, Optional
+
+from configx.core.tree import ConfigTree
+from configx.storage.runtime import StorageRuntime
+from configx.qlang.interpreter import ConfigXQLInterpreter
+import os, json
+
+class ConfigX:
+    """
+    Public ConfigX runtime.
+
+    Example usage:
+
+        confx = ConfigX()
+        confx.resolve('app.ui.theme="dark"')
+        value = confx.resolve('app.ui.theme')
+    """
+    def __init__(
+        self,
+        *,
+        persistent: bool = False,
+        storage_dir: Optional[str] = None,
+        load_json: Optional[str] = None,
+        ):
+        """
+        Initialize a ConfigX runtime.
+        Args:
+        persistent: Enable WAL + snapshot persistence
+        storage_dir: Custom storage directory (defaults to .configx/)
+        load_json: Optional JSON file to bootstrap initial state
+        
+        """
+
+        # Core in-memory structure
+        self._tree = ConfigTree()
+        self._intp = ConfigXQLInterpreter(self._tree)
+
+        # Persistence runtime (optional)
+        self._storage = None
+        if storage_dir:
+            snapshot_path = f"{storage_dir}/snapshot.cx"
+            wal_path = f"{storage_dir}/wal.cx"
+
+            self._storage = StorageRuntime(snapshot_path, wal_path)
+            self._tree.attach_runtime(self._storage)
+            self._storage.start(self._tree)
+
+            self._storage = None
+
+
+        if persistent:
+            base_dir = storage_dir or os.path.join(os.getcwd(), ".configx")
+            os.makedirs(base_dir, exist_ok=True)
+
+
+            snapshot_path = os.path.join(base_dir, "snapshot.cx")
+            wal_path = os.path.join(base_dir, "wal.cx")
+
+
+            self._storage = StorageRuntime(snapshot_path, wal_path)
+            self._tree.runtime = self._storage
+            self._storage.start(self._tree)
+    
+        if load_json:
+            self.load_json(load_json)
+
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
+
+    def resolve(self, query: str) -> Any:
+        """
+        Resolve a ConfigXQL query against the current runtime.
+
+        This is the primary API surface for ConfigX.
+        """
+        return self._intp.execute(query)
+    
+    def load_json(self, path: str):
+        """
+        Load a JSON file and ingest it as initial state.
+        This mutates the current tree.
+        """
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        self._ingest_dict(data)
+
+    def close(self):
+        """
+        Gracefully shut down the runtime.
+
+        If persistence is enabled, this will:
+        - write a snapshot
+        - clear the WAL
+        """
+        if self._storage:
+            self._storage.shutdown(self._tree)
+
+    # ------------------------------------------------------------------
+    # Introspection helpers
+    # ------------------------------------------------------------------
+
+
+    def _ingest_dict(self, data: dict, prefix: str = ""):
+        """
+        Recursively ingest a Python dict into the ConfigTree.
+        """
+        for key, value in data.items():
+            path = f"{prefix}.{key}" if prefix else key
+
+
+            if isinstance(value, dict):
+                # Ensure branch exists
+                self._tree.ensure_branch(path)
+                self._ingest_dict(value, path)
+            else:
+                self._tree.set(path, value)
+
+
+    def dump(self) -> dict:
+        """
+        Dump the entire configuration tree as a Python dict.
+        Intended for debugging, exporting, and inspection.
+        """
+        return self._tree.to_dict()
+
+    # ------------------------------------------------------------------
+    # Explicitly unsupported (future features)
+    # ------------------------------------------------------------------
+
+    def transaction(self):
+        """
+        Transactions are not implemented yet.
+
+        WAL provides durability and crash recovery, but multi-operation
+        atomic transactions will be added in a future version.
+        """
+        raise NotImplementedError(
+            "Transactions are not implemented yet. WAL-only durability is enabled."
+        )
