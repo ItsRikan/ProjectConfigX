@@ -531,6 +531,17 @@ ConfigX is actively under development with exciting features coming soon! Stay u
 
 ---
 
+## [ Contributing ]
+
+### Join the ConfigX Evolution
+We welcome contributions from developers of all skill levels! Whether you're fixing a bug, adding a new feature, or improving documentation, your help makes ConfigX better for everyone.
+
+Detailed instructions on how to get started, our coding standards, and the submission process can be found in our contribution guide:
+
+**[ View Contribution Guidelines ](CONTRIBUTIONS.md)**
+
+---
+
 ## Contact Me
 
 For questions, feedback, or contributions:
