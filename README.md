@@ -1,4 +1,4 @@
-![ConfigX Banner](https://github.com/xdityagr/ConfigX/blob/main/assets/banner1.png?raw=true)
+![ConfigX Banner](https://github.com/GDSC-Manipal-University-Jaipur/ProjectConfigX/blob/main/assets/banners/banner_configx.png?raw=true)
 
 # ConfigX - A Universal AI-Powered Hierarchical Data Engine
 
