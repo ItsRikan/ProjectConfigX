@@ -1,0 +1,80 @@
+name: Bug Report 🐛
+description: Create a report to help us improve ConfigX
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks for contributing!**
+        Please fill out the fields below to help us debug the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: "I encountered a KeyError when using nested paths..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: Please provide the code or steps to reproduce the error.
+      placeholder: |
+        1. Initialize ConfigX
+        2. Run query 'appSettings.theme'
+        3. See error
+      render: python
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Logs
+      description: Paste the full traceback or error message here.
+      render: shell
+      placeholder: |
+        Traceback (most recent call last):
+          File "main.py", line 10, in <module>
+            confx.resolve(...)
+        KeyError: 'theme'
+    validations:
+      required: false
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: python-version
+    attributes:
+      label: Python Version
+      options:
+        - "3.12"
+        - "3.11"
+        - "3.10"
+        - "3.9"
+        - "Other"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: ConfigX Version
+      description: Which version are you using? (e.g., Alpha 0.1)
+      placeholder: "0.1.0"
+    validations:
+      required: false
