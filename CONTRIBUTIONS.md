@@ -96,6 +96,8 @@ To maintain a high-quality codebase, please adhere to the following guidelines.
 | **Constants** | `UPPER_CASE` | `MAX_RETRIES`, `DEFAULT_PATH` |
 | **Internal** | Prefix with `_` | `_tree`, `_internal_method` |
 
+- Use proper spacing between operators, variable declarations, commas, etc. 
+
 ### Best Practices (Do's and Don'ts)
 
 | Category | [ + ] Do this | [ - ] Don't do this |
@@ -143,6 +145,30 @@ We follow **Conventional Commits**. Please use the following prefixes:
 | `docs` | Documentation only changes |
 | `style` | Formatting, missing semi-colons, etc. |
 | `refactor` | Code change that neither fixes a bug nor adds a feature |
+| `test` | Adding or correcting tests (see below) |
+| `chore` | Maintenance tasks (dependencies, build) |
+
+#### Scopes 
+You should add a scope in parentheses to provide context on *where* the change happened.
+* **Format:** `type(scope): description`
+* **Example:** `feat(core): added <x> feature in core`
+* **Example:** `fix(core): fixed <x> bug in core`
+
+#### Breaking Changes
+If your commit breaks backward compatibility (e.g. removing a feature, refactoring names, etc.), you must add an exclamation mark `!` after the type/scope.
+* **Format:** `type!: description` or `type(scope)!: description`
+* **Example:** `feat!: remove support for Python 3.8`
+* **Example:** `refactor(core)!: rename ConfigTree to ConfigXTree`
+
+#### Test Commit Formats
+For test-specific changes, please use the following structure:
+* `test(new): <description>` – Creating a new test function.
+* `test(fix): <description>` – Fixing a test function.
+* `test(refactor): <description>` – Refactoring a test function.
+
+#### Branching for Tests
+* **New Feature:** Add tests in the **same branch** as the feature.
+* **Existing Feature:** Create a **new branch** to add missing tests.
 
 **Example:**
 ```bash
