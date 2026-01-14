@@ -195,8 +195,9 @@ git push origin <your-branch-name>
 ## [ Getting Help ]
 
 If you get stuck or have questions:
-
+*  [Join Discord Server & Chat with Maintainer in the forum](https://discord.gg/hfRFC9Q6)
+*  [Forum link](https://discord.com/channels/1454562785928151203/1454563533235949569)
 *  Comment on the specific Issue or Pull Request.
-*  Reach out to the maintainers via email: `adityagaur.home@gmail.com`, 
+*  Reach out to the maintainer via email: `adityagaur.home@gmail.com`, 
 
 **Happy Coding!**
